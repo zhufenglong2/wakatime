@@ -1,0 +1,31 @@
+server:
+  port: 3040
+wakatime:
+#  secret-api-key: be6852dc-cde7-4d44-8f17-0690f68a2d1c  # wakatime app key
+  secret-api-key: 78c6cd06-bd3e-4cc5-ae88-79b8274f1877  # wakatime app key
+  proxy-url: http://127.0.0.1:1082 # wakatime接口访问代理地址,例如：socks5://127.0.0.1:1080 或 http://127.0.0.1:1087，请根据实际情况配置
+  start-day: 2016-02-01 # 起始记录时间
+  ftqq-key: # Server酱 SCKEY @see http://sc.ftqq.com，为空表示不发生此类消息通知
+  dingding-key:  # 钉钉机器人token，为空表示不发生此类消息通知
+  fill-no-data-day: true # 活动图中如果某天没数据，是否要用空数据填充
+logging:
+  level:
+    root: info
+  config: classpath:log4j2-spring.xml
+spring:
+  application:
+    name: wakatime-sync
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    suffix: .html
+    prefix: classpath:/templates/
+#  redis:
+#    host: @redis.host@
+#    port: '@redis.port@'
+#    password: @redis.password@
+  datasource:
+    url: jdbc:mysql://localhost:3306/wakatime_sync?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai  # 设置为东8区，而不是UTC
+    password: 971223
+    username: root

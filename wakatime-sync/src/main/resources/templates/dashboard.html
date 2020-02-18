@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height">
+    <title>WakaTime</title>
+    <style>
+        body {
+            min-width: 640px
+        }
+
+        .graph-item {
+            margin: 15px;
+            padding: 25px;
+            background: #2d353c;
+            color: #fff;
+            align-content: center;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .graph-head {
+            display: flex;
+            justify-content: center;
+            vertical-align: middle;
+            margin-bottom: 20px;
+        }
+
+        .graph-head > span {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .graph-title {
+            line-height: 2;
+        }
+
+        .graph-head > span:first-child {
+            margin-right: 20px;
+        }
+
+        .chart-container {
+            justify-content: center;
+            display: flex;
+        }
+
+        .graph-chart {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #coding-activity > div {
+            text-align: center;
+        }
+
+        #coding-activity > div canvas {
+            display: inline-block;
+        }
+
+        .el-switch__label span {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: .8;
+        }
+
+        .el-switch__label.is-active span {
+            color: #409EFF;
+            margin-right: 0;
+        }
+
+        @media print, screen and (max-width: 25em) {
+            .el-date-range-picker {
+                left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app" style="z-index: 0">
+    <template>
+        <div class="graph-item">
+            <div class="graph-head">
+                <el-row>
+                    <span class="graph-title">Duration </span>
+                    <span>
+                            <el-button type="info" icon="el-icon-arrow-left" title="前一天" @click="preDayDurations"
+                                       :disabled="prevBtnDisabled"></el-button>
+                            <el-date-picker v-model="durationDay" type="date" placeholder="选择日期"
+                                            :clearable="false"
+                                            :editable="false"
+                                            @change="updateDurationChart"
+                                            :picker-options="durationTimeOptions">
+                            </el-date-picker>
+                            <el-button type="info" icon="el-icon-arrow-right" title="后一天" @click="nextDayDurations"
+                                       :disabled="nextBtnDisabled"></el-button>
+                    </span>
+                </el-row>
+            </div>
+            <div class="chart-container">
+                <div class="graph-chart">
+                    <div id="durations"></div>
+                    <div id="no-duration-data" style="display: none">无数据</div>
+                </div>
+            </div>
+        </div>
+        <div class="graph-item">
+            <div class="graph-head">
+                <span class="graph-title">Activity </span>
+                <span>
+                    <el-date-picker
+                            v-model="rangeDays"
+                            type="daterange"
+                            :clearable="false"
+                            :editable="false"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            @change="updateSummaryCharts"
+                            :picker-options="rangeTimeOptions">
+                    </el-date-picker>
+                </span>
+            </div>
+            <div class="chart-container">
+                <div class="graph-chart">
+                    <div id="coding-activity"></div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="graph-chart">
+                    <table id="circle-table" style="width: 900px">
+                        <tr>
+                            <th>Editors</th>
+                            <th>Languages</th>
+                            <th>Actions</th>
+                            <th>Systems</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="group-editor"></div>
+                            </td>
+                            <td>
+                                <div id="group-language"></div>
+                            </td>
+                            <td>
+                                <div id="group-action"></div>
+                            </td>
+                            <td>
+                                <div id="group-system"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="graph-item">
+            <div class="graph-head">
+                <span>Calendar </span>
+                <span>
+                    <el-switch
+                            v-model="showAllTime"
+                            active-text="全部时间"
+                            inactive-text="最近一年" @change="updateDayMapChart">
+                    </el-switch>
+                </span>
+            </div>
+            <div class="chart-container">
+                <div class="graph-chart">
+                    <div id="day-map" style="height:240px;"></div>
+                </div>
+            </div>
+
+        </div>
+    </template>
+</div>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/
+document.body.clientHeight;</script>
+<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.4.10/dist/g2.min.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.data-set-0.10.1/dist/data-set.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/echarts/4.1.0/echarts.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+<script src="https://cdn.bootcss.com/moment-duration-format/2.2.2/moment-duration-format.min.js"></script>
+<script th:src="@{/js/wakatime.js}"></script>
+<script src="https://cdn.bootcss.com/vue/2.5.21/vue.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+
+    function yesterday() {
+        return moment(formatDay(moment().subtract(1, 'd')));
+    }
+
+    /**
+     * 起始时间，根据实际情况修改
+     */
+    const START_DAY = moment('2016-02-15');
+
+    let vm = new Vue({
+        el: '#app',
+        created() {
+            // this.init();
+        },
+        data() {
+            return {
+                durationTimeOptions: {
+                    disabledDate: (time) => {
+                        let t = moment(time);
+                        return t > yesterday() || t < START_DAY;
+                    }
+                },
+                rangeTimeOptions: {
+                    disabledDate: (time) => {
+                        let t = moment(time);
+                        return t > yesterday() || t < START_DAY;
+                    },
+                    shortcuts: [{
+                        text: '最近一周',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(7, 'd');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近两周',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(14, 'd');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一个月',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(1, 'M');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近三个月',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(3, 'M');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近半年',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(6, 'M');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一年',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(1, 'y');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近两年',
+                        onClick(picker) {
+                            const end = yesterday();
+                            const start = moment().subtract(2, 'y');
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '全部时间',
+                        onClick(picker) {
+                            const end = yesterday();
+                            picker.$emit('pick', [START_DAY, end]);
+                        }
+                    }]
+                },
+                prevBtnDisabled: false,
+                nextBtnDisabled: true,
+                durationDay: yesterday(),
+                rangeDays: [moment().subtract(10, 'd'), yesterday()],
+                dayMapStartDay: formatDay(moment().subtract(1, 'y')),
+                dayMapEndDay: formatDay(yesterday()),
+                showAllTime: false,
+            }
+        }, methods: {
+            init: function () {
+                this.loadDurations();
+                initSummaries(formatDay(this.rangeDays[0]), formatDay(this.rangeDays[1]));
+                this.updateDayMapChart();
+            },
+            loadDurations: function () {
+                initDurations(this.formatDurationDate());
+            },
+            updateDurationChart: function () {
+                this.durationDay = moment(this.durationDay);
+                updateDurations(this.formatDurationDate());
+                this.updateDurationBtnStatus();
+            },
+            preDayDurations: function () {
+                this.durationDay = moment(this.durationDay.subtract(1, 'd'));
+                updateDurations(this.formatDurationDate());
+                this.updateDurationBtnStatus();
+            },
+            nextDayDurations: function () {
+                this.durationDay = moment(this.durationDay.add(1, 'd'));
+                updateDurations(this.formatDurationDate());
+                this.updateDurationBtnStatus();
+            },
+            updateSummaryCharts: function () {
+                updateSummaries(formatDay(this.rangeDays[0]), formatDay(this.rangeDays[1]));
+                this.updateDurationBtnStatus();
+            },
+            updateDurationBtnStatus: function () {
+                this.nextBtnDisabled = this.durationDay >= yesterday();
+                this.prevBtnDisabled = this.durationDay <= START_DAY;
+            },
+            updateDayMapChart: function () {
+                initDayMap(this.dayMapStartDay, this.dayMapEndDay, this.showAllTime);
+            },
+            formatDurationDate() {
+                return formatDay(this.durationDay);
+            }
+        }
+    });
+    $(function () {
+        vm.init();
+    })
+</script>
+</body>
+</html>

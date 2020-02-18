@@ -1,0 +1,1 @@
+[08:28:17:068] [ERROR] - com.wf2311.wakatime.sync.spider.JoddHttpClient.get(JoddHttpClient.java:81) - SOCKS5: java.net.ConnectException: Connection refused: connect; <--- java.net.ConnectException: Connection refused: connect
