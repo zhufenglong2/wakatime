@@ -32,6 +32,7 @@ public class WakaTimeDataSpider {
     }
 
     public static List<HeartBeat> heartbeat(LocalDate date) {
+//        调用MapBuilder的ofDate方法，将传入的date作为Map的value部分，对应的key是"date"
         Map<String, String> params = MapBuilder.ofDate(date).build();
         String s = JoddHttpClient.get(ApiUrl.HEART_BEATS, params);
         return JsonParser.parseList(s, HeartBeat.class);

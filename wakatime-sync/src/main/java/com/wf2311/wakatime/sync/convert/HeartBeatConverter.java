@@ -38,6 +38,11 @@ public class HeartBeatConverter {
         }
     }
 
+    /**
+     * 转换函数，将类型HeartBeat转换为HeartBeatEntity
+     * @param s
+     * @return HeartBeatEntity
+     */
     private HeartBeatEntity convert(HeartBeat s) {
         HeartBeatEntity t = new HeartBeatEntity();
         String simpleName = EntityConvertHelper.getSimpleName(s.getEntity());

@@ -44,6 +44,7 @@ public class HeartBeatService {
      */
     @Transactional(rollbackFor = Exception.class)
     public int sync(LocalDate day) {
+        // 调用计算时间的方法
         long local = heartBeatRepository.countByDay(day);
         List<HeartBeat> data = WakaTimeDataSpider.heartbeat(day);
         int remote = data != null ? data.size() : 0;
@@ -51,8 +52,10 @@ public class HeartBeatService {
             CommonUtil.syncLog().info(String.format("%s的心跳数据已是最新，无需同步。", day));
             return 0;
         }
+//        将元素为HeartBeat的集合转换为元素为HeartBeatEntity的集合
         List<HeartBeatEntity> heartBeats = HeartBeatConverter.of(data).getHeartBeats();
         if (!CollectionUtils.isEmpty(heartBeats)) {
+//            将原来本地数据库的当天数据删除，然后保存集合中的数据
             deleteDataIfNotNull(day);
             heartBeatRepository.saveAll(heartBeats);
         }

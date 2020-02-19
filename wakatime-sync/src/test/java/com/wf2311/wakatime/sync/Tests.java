@@ -1,25 +1,34 @@
 package com.wf2311.wakatime.sync;
 
 import com.wf2311.wakatime.sync.domain.Duration;
+import com.wf2311.wakatime.sync.entity.HeartBeatEntity;
 import com.wf2311.wakatime.sync.entity.Time;
 import com.wf2311.wakatime.sync.message.MessageFactory;
+import com.wf2311.wakatime.sync.repository.HeartBeatRepository;
 import com.wf2311.wakatime.sync.repository.TimeRepository;
 import com.wf2311.wakatime.sync.service.sync.SyncService;
 import com.wf2311.wakatime.sync.spider.WakaTimeDataSpider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * 该类为测试类
+ * 添加AbstractTransactionalJUnit4SpringContextTests是为了回滚数据库
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Tests {
+public class Tests extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Test
     public void contextLoads() {
@@ -27,7 +36,8 @@ public class Tests {
 
     @Resource
     private TimeRepository timeRepository;
-
+    @Resource
+    private HeartBeatRepository heartBeatRepository;
     @Test
     public void test2() {
         Time time = new Time();
@@ -37,6 +47,15 @@ public class Tests {
         timeRepository.save(time);
     }
 
+    /**
+     * 测试jpa获取数据库中数据
+     */
+    @Test
+    public void test(){
+        long id = 1;
+        Optional<HeartBeatEntity> heartBeatEntity = heartBeatRepository.findById(id);
+        heartBeatEntity.ifPresent(beatEntity -> System.out.println(beatEntity.toString()));
+    }
     @Resource
     private SyncService syncService;
 

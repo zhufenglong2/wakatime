@@ -34,6 +34,7 @@ public class CommonUtil {
         if (s == null || s.length() <= max) {
             return s;
         }
+//        前面的字符串截取，只留后面的
         String sub = SUB_PRE + s.substring(s.length() - max + 4);
         log.info("string:[" + s + "] length over " + max+"\n sub to ["+sub+"]");
 
