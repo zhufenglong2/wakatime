@@ -12,7 +12,7 @@ import java.util.List;
  * @author <a href="mailto:wf2311@163.com">wf2311</a>
  * @since 2019-01-09 22:03.
  */
-public class JsonParser {
+public class JsonParser{
     public static <T> List<T> parseList(String s, Class<T> cls) {
         JSONObject object = JSONObject.parseObject(s);
         JSONArray data = object.getJSONArray("data");

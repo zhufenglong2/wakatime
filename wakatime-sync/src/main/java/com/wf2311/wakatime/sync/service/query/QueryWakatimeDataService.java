@@ -68,7 +68,7 @@ public class QueryWakatimeDataService extends AbstractDaySummaryService {
     }
 
     private List<DayDurationVo> findDayDurationData(LocalDate day) {
-        List<DurationEntity> list = durationRepository.queryByDay(day);
+        List<DurationEntity> list = durationRepository.queryByDayAndApiKey(day);
         if (list.isEmpty()) {
             return Collections.emptyList();
         }

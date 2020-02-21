@@ -57,6 +57,12 @@ public class DurationEntity {
     private LocalDateTime createdTime;
 
 
+    /**
+     * secret api key
+     */
+    @Column(name = "user_api_key")
+    private String apiKey;
+
     public void setProject(String project) {
         this.project = CommonUtil.subStringIfOverLength(project, 50);
     }

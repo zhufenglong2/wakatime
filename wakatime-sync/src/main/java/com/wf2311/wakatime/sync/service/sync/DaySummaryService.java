@@ -28,6 +28,7 @@ public class DaySummaryService extends AbstractDaySummaryService {
     public void sync(LocalDate day) {
         Integer localSeconds = 0;
         List<DayGrandTotalEntity> dayGrandTotals = dayGrandTotalRepository.queryByDay(day);
+//        如果不为空，则拿第一条数据 一般正常情况只有一条， 是当天编程总时间
         if (!CollectionUtils.isEmpty(dayGrandTotals)) {
             localSeconds = dayGrandTotals.get(0).getTotalSeconds();
         }

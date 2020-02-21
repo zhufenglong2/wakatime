@@ -53,8 +53,14 @@ public class HeartBeatEntity {
      */
     private LocalDateTime createdTime;
 
+    /**
+     * 用户apiKey
+     */
+    @Column(name = "user_api_key")
+    private String apiKey;
 
     public void setName(String name) {
+//        由于数据库中该字段设置长度为255，所以要进行截取
         this.name = CommonUtil.subStringIfOverLength(name, 255);
     }
 

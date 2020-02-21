@@ -25,7 +25,8 @@ public class HeartBeatService {
     /**
      * 同步某一段时间(以天为单位)内的数据
      */
-    public void sync(LocalDate startDay, LocalDate endDay) {
+    public void sync(LocalDate startDay, LocalDate endDay, String apiKey) {
+//        循环同步每天的数据
         while (startDay.isBefore(endDay)) {
             sync(startDay);
             startDay = startDay.plusDays(1);
@@ -33,7 +34,7 @@ public class HeartBeatService {
     }
 
     private void deleteDataIfNotNull(LocalDate day) {
-        long existCount = heartBeatRepository.countByDay(day);
+        long existCount = heartBeatRepository.countByDayAndApiKey(day);
         if (existCount > 0) {
             heartBeatRepository.deleteByDay(day);
         }
@@ -44,8 +45,8 @@ public class HeartBeatService {
      */
     @Transactional(rollbackFor = Exception.class)
     public int sync(LocalDate day) {
-        // 调用计算时间的方法
-        long local = heartBeatRepository.countByDay(day);
+        // 调用计算时间的方法y
+        long local = heartBeatRepository.countByDayAndApiKey(day);
         List<HeartBeat> data = WakaTimeDataSpider.heartbeat(day);
         int remote = data != null ? data.size() : 0;
         if (remote <= local) {

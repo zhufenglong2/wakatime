@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 public class DayCategory extends BaseWakatimeData {
     public DayCategoryEntity convert(LocalDate day, LocalDateTime createdTime) {
         DayCategoryEntity t = new DayCategoryEntity();
+//        bean进行拷贝，然后设置day和createdTime属性
         BeanUtils.copyProperties(this, t);
         t.setDay(day);
         t.setCreatedTime(createdTime);

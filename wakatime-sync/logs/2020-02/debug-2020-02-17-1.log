@@ -1,0 +1,1 @@
+[19:09:20:141] [DEBUG] - org.hibernate.validator.internal.engine.ValidatorFactoryImpl.logValidatorFactoryScopedConfiguration(ValidatorFactoryImpl.java:578) - HV000234: Using org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator as ValidatorFactory-scoped message interpolator.

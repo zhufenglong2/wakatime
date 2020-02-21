@@ -1,5 +1,7 @@
 package com.wf2311.wakatime.sync.repository;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,21 +14,25 @@ public interface DurationTimeQueryHandler<T> {
 
     <S extends T> List<S> saveAll(Iterable<S> entities);
 
-    List<T> findByStartTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
+    List<T> findByStartTimeBetweenAndApiKey(LocalDateTime startTime, LocalDateTime endTime, String apiKey);
 
-    long countByStartTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
+    long countByStartTimeBetweenAndApiKey(LocalDateTime startTime, LocalDateTime endTime, String apiKey);
 
-    long deleteByStartTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
+    long deleteByStartTimeBetweenAndApiKey(LocalDateTime startTime, LocalDateTime endTime, String apiKey);
 
-    default List<T> queryByDay(LocalDate day) {
-        return findByStartTimeBetween(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusSeconds(1));
+    /**
+     * @param day
+     * 要注意如果之后的界面数据查询就不能用这个方法，因为apiKey要换为对应的职工apiKey
+     */
+    default List<T> queryByDayAndApiKey(LocalDate day) {
+        return findByStartTimeBetweenAndApiKey(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusSeconds(1), WakatimeProperties.SECRET_API_KEY);
     }
 
-    default long countByDay(LocalDate day) {
-        return countByStartTimeBetween(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusSeconds(1));
+    default long countByDayAndApiKey(LocalDate day) {
+        return countByStartTimeBetweenAndApiKey(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusSeconds(1), WakatimeProperties.SECRET_API_KEY);
     }
 
-    default long deleteByDay(LocalDate day) {
-        return deleteByStartTimeBetween(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusSeconds(1));
+    default long deleteByDayAndApiKey(LocalDate day) {
+        return deleteByStartTimeBetweenAndApiKey(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusSeconds(1), WakatimeProperties.SECRET_API_KEY);
     }
 }

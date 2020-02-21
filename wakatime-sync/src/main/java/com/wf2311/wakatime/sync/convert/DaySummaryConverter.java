@@ -35,6 +35,7 @@ public class DaySummaryConverter {
         this.summary = summary;
         this.day = summary.getDate();
         this.now = LocalDateTime.now();
+//        转换函数 使用集合的流操作
         convert();
     }
 

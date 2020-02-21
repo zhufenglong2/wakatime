@@ -1,5 +1,6 @@
 package com.wf2311.wakatime.sync.convert;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.domain.Duration;
 import com.wf2311.wakatime.sync.entity.DurationEntity;
 import com.wf2311.wakatime.sync.spider.JsonParser;
@@ -47,6 +48,8 @@ public class DurationConverter {
         t.setStartTime(EntityConvertHelper.doubleToDate(s.getSecond()));
         t.setEndTime(EntityConvertHelper.doubleToDate(s.getSecond() + s.getDuration()));
         t.setCreatedTime(now);
+//        不要忘了设置apiKey
+        t.setApiKey(WakatimeProperties.SECRET_API_KEY);
         return t;
     }
 }

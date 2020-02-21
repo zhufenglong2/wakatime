@@ -1,26 +1,30 @@
 package com.wf2311.wakatime.sync;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.domain.Duration;
 import com.wf2311.wakatime.sync.entity.HeartBeatEntity;
 import com.wf2311.wakatime.sync.entity.Time;
+import com.wf2311.wakatime.sync.entity.UserApiKey;
 import com.wf2311.wakatime.sync.message.MessageFactory;
-import com.wf2311.wakatime.sync.repository.HeartBeatRepository;
-import com.wf2311.wakatime.sync.repository.TimeRepository;
+import com.wf2311.wakatime.sync.repository.*;
 import com.wf2311.wakatime.sync.service.sync.SyncService;
 import com.wf2311.wakatime.sync.spider.WakaTimeDataSpider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * 该类为测试类
@@ -56,6 +60,65 @@ public class Tests extends AbstractTransactionalJUnit4SpringContextTests {
         Optional<HeartBeatEntity> heartBeatEntity = heartBeatRepository.findById(id);
         heartBeatEntity.ifPresent(beatEntity -> System.out.println(beatEntity.toString()));
     }
+    @Resource
+    ProjectDurationRepository projectDurationRepository;
+    /**
+    * 测试获取每个项目的持续时间
+    */
+    @Test
+    public void testProjectDurationTotal(){
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.parse("2020-02-18", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = start.atStartOfDay().atZone(zone).toInstant();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+//        System.out.println(localDateTime);
+//        System.out.println(start+"\n"+end);
+        List<ProjectDurationSummary> projectDurationEntities = projectDurationRepository.findGrounpByEndTime();
+        for(ProjectDurationSummary projectDurationEntity :projectDurationEntities){
+            System.out.println(projectDurationEntity.getId()+"  "+projectDurationEntity.getTotal());
+        }
+    }
+    /**
+     * 测试用户apikey表的信息查询
+     */
+    @Resource
+    UserApiKeyRepository userApiKeyRepository;
+    @Test
+    public void testUserRepository(){
+        String id = "10001";
+        Optional<UserApiKey> userApiKey = userApiKeyRepository.findById(id);
+        List<String> apiKeys = userApiKeyRepository.findAll().stream().map(UserApiKey::getApiKey).collect(Collectors.toList());
+        if(userApiKey.isPresent()){
+            System.out.println(userApiKey.toString());
+        }
+        for(String apiKey:apiKeys){
+            System.out.println(apiKey);
+        }
+    }
+
+    /**
+     * 测试是否将用户apikey表中的字段传入常量类
+     */
+    @Test
+    public void testProperties(){
+        WakatimeProperties.SECRET_API_KEYS = userApiKeyRepository.findAll().stream().map(UserApiKey::getApiKey).collect(Collectors.toList());
+        for(String apiKey: WakatimeProperties.SECRET_API_KEYS){
+            System.out.println(apiKey);
+        }
+    }
+
+    /**
+     * 测试基于用户apiKey的各种查询
+     */
+    @Test
+    public void testHeartBeatQuery(){
+        long local = heartBeatRepository.countByTimeBetweenAndApiKey(LocalDate.parse("2020-02-20",DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                LocalDate.parse("2020-02-20",DateTimeFormatter.ofPattern("yyyy-MM-dd")).plusDays(1).atStartOfDay().minusSeconds(1)
+                , "78c6cd06-bd3e-4cc5-ae88-79b8274f1877");
+        System.out.println(local);
+    }
+
     @Resource
     private SyncService syncService;
 

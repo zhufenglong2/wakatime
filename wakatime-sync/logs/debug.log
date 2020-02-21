@@ -1,0 +1,1 @@
+[19:09:20:175] [DEBUG] - org.hibernate.validator.internal.engine.ValidatorFactoryImpl.logValidatorFactoryScopedConfiguration(ValidatorFactoryImpl.java:579) - HV000234: Using org.hibernate.validator.internal.engine.resolver.JPATraversableResolver as ValidatorFactory-scoped traversable resolver.

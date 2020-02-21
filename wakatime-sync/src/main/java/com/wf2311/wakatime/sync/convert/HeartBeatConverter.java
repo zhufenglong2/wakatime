@@ -1,5 +1,6 @@
 package com.wf2311.wakatime.sync.convert;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.domain.HeartBeat;
 import com.wf2311.wakatime.sync.entity.HeartBeatEntity;
 import org.springframework.util.CollectionUtils;
@@ -52,6 +53,8 @@ public class HeartBeatConverter {
         t.setType(s.getType());
         t.setUuid(s.getUuid());
         t.setCreatedTime(now);
+//        设置用户apiKey为当前正在查询的apiKey
+        t.setApiKey(WakatimeProperties.SECRET_API_KEY);
         return t;
     }
 }

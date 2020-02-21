@@ -77,6 +77,11 @@ public class ProjectDurationEntity {
      */
     private LocalDateTime createdTime;
 
+    /**
+     * secret api key
+     */
+    @Column(name = "user_api_key")
+    private String apiKey;
 
     public void setBranch(String branch) {
         this.branch = CommonUtil.subStringIfOverLength(branch, 20);

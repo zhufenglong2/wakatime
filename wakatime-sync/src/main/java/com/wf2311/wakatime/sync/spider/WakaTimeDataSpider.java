@@ -19,6 +19,7 @@ public class WakaTimeDataSpider {
         Map<String, String> params = MapBuilder.newBuilder()
                 .putStart(date).putEnd(date).build();
         String s = JoddHttpClient.get(ApiUrl.SUMMARY, params);
+//        将请求到的数据进行解析，反序列化为DaySummary对象
         DaySummary summary = JsonParser.parseList(s, DaySummary.class).get(0);
         summary.setDate(date);
         return summary;

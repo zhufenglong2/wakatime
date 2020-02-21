@@ -1,5 +1,6 @@
 package com.wf2311.wakatime.sync.convert;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.domain.ProjectDuration;
 import com.wf2311.wakatime.sync.entity.ProjectDurationEntity;
 import com.wf2311.wakatime.sync.spider.JsonParser;
@@ -35,6 +36,7 @@ public class ProjectDurationConverter {
     }
 
     private void convert() {
+//        若集合不为空，则进行集合的流操作，将元素类型为ProjectDuration的集合转变为元素类型为ProjectDurationEntity
         if (!CollectionUtils.isEmpty(data)) {
             this.durations = data.stream().map(this::convert).collect(Collectors.toList());
         }
@@ -47,6 +49,8 @@ public class ProjectDurationConverter {
         duration.setStartTime(EntityConvertHelper.doubleToDate(s.getSecond()));
         duration.setEndTime(EntityConvertHelper.doubleToDate(s.getSecond() + s.getDuration()));
         duration.setCreatedTime(now);
+//        secret api key
+        duration.setApiKey(WakatimeProperties.SECRET_API_KEY);
         return duration;
     }
 }
