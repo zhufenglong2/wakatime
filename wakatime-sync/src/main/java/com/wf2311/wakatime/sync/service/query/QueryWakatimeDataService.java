@@ -92,7 +92,7 @@ public class QueryWakatimeDataService extends AbstractDaySummaryService {
         assertTimeInRange(end);
 
         SummaryDataVo data = new SummaryDataVo();
-        List<DayProjectEntity> projects = dayProjectRepository.queryByDay(start, end);
+        List<DayProjectEntity> projects = dayProjectRepository.queryByDayAndApiKey(start, end);
         if (wakatimeProperties.getFillNoDataDay()) {
             fillNoDataDay(start, end, projects);
         }

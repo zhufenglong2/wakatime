@@ -1,6 +1,8 @@
 package com.wf2311.wakatime.sync.repository;
 
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,26 +15,26 @@ import java.util.List;
 public interface DaySummaryQueryHandler<T> {
     <S extends T> List<S> saveAll(Iterable<S> entities);
 
-    List<T> findByDayBetween(LocalDate startDay, LocalDate endDay);
+    List<T> findByDayBetweenAndApiKey(LocalDate startDay, LocalDate endDay, String apiKey);
 
-    long countByDayBetween(LocalDate startDay, LocalDate endDay);
+    long countByDayBetweenAndApiKey(LocalDate startDay, LocalDate endDay, String apiKey);
 
     @Transactional
-    void deleteByDayBetween(LocalDate startDay, LocalDate endDay);
+    void deleteByDayBetweenAndApiKey(LocalDate startDay, LocalDate endDay, String apiKey);
 
-    default List<T> queryByDay(LocalDate day) {
-        return findByDayBetween(day, day);
+    default List<T> queryByDayAndApiKey(LocalDate day) {
+        return findByDayBetweenAndApiKey(day, day, WakatimeProperties.SECRET_API_KEY);
     }
 
-    default long countByDay(LocalDate day) {
-        return countByDayBetween(day, day);
+    default long countByDayAndApiKey(LocalDate day) {
+        return countByDayBetweenAndApiKey(day, day, WakatimeProperties.SECRET_API_KEY);
     }
 
-    default void deleteByDay(LocalDate day) {
-        deleteByDayBetween(day, day);
+    default void deleteByDayAndApiKey(LocalDate day) {
+        deleteByDayBetweenAndApiKey(day, day, WakatimeProperties.SECRET_API_KEY);
     }
 
-    default List<T> queryByDay(LocalDate startDay, LocalDate endDay) {
-        return findByDayBetween(startDay, endDay);
+    default List<T> queryByDayAndApiKey(LocalDate startDay, LocalDate endDay) {
+        return findByDayBetweenAndApiKey(startDay, endDay, WakatimeProperties.SECRET_API_KEY);
     }
 }

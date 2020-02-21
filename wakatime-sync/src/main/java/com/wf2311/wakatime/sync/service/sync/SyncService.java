@@ -57,7 +57,7 @@ public class SyncService {
             //        持续时间同步
             durationService.sync(day);
 //            //        每日总览数据同步
-//            daySummaryService.sync(day);
+            daySummaryService.sync(day);
         }
     }
 

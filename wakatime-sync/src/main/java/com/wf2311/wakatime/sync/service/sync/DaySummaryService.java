@@ -27,7 +27,7 @@ public class DaySummaryService extends AbstractDaySummaryService {
      */
     public void sync(LocalDate day) {
         Integer localSeconds = 0;
-        List<DayGrandTotalEntity> dayGrandTotals = dayGrandTotalRepository.queryByDay(day);
+        List<DayGrandTotalEntity> dayGrandTotals = dayGrandTotalRepository.queryByDayAndApiKey(day);
 //        如果不为空，则拿第一条数据 一般正常情况只有一条， 是当天编程总时间
         if (!CollectionUtils.isEmpty(dayGrandTotals)) {
             localSeconds = dayGrandTotals.get(0).getTotalSeconds();
@@ -54,6 +54,7 @@ public class DaySummaryService extends AbstractDaySummaryService {
         }
         LocalDate day = summary.getDate();
         deleteDataIfNotNull(day, dayGrandTotalRepository);
+//        grandTotal 只有一条记录，而其他的都是以List形式 通过调用saveAll进行持久化操作
         dayGrandTotalRepository.save(grandTotal);
         saveDayData(day, converter.getCategories(), DayCategoryEntity.class);
         saveDayData(day, converter.getDependencies(), DayDependencyEntity.class);
@@ -66,6 +67,7 @@ public class DaySummaryService extends AbstractDaySummaryService {
 
     private <T> void saveDayData(LocalDate day, List<T> list, Class<? extends BaseDayEntity> clazz) {
         if (!CollectionUtils.isEmpty(list)) {
+//            dayRepositoryMap 继承自父类 AbstractDaySummaryService 包含实体类和持久化接口的对应关系
             DaySummaryQueryHandler handler = dayRepositoryMap.get(clazz);
             deleteDataIfNotNull(day, handler);
             handler.saveAll(list);
@@ -73,10 +75,14 @@ public class DaySummaryService extends AbstractDaySummaryService {
         }
     }
 
+    /**
+     * @param day
+     * @param handler 由于多态性质 handler可能指向任何一种继承DaySummaryQueryHandler的接口
+     */
     private void deleteDataIfNotNull(LocalDate day, DaySummaryQueryHandler handler) {
-        long existCount = handler.countByDay(day);
+        long existCount = handler.countByDayAndApiKey(day);
         if (existCount > 0) {
-            handler.deleteByDay(day);
+            handler.deleteByDayAndApiKey(day);
         }
     }
 }

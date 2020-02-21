@@ -1,5 +1,6 @@
 package com.wf2311.wakatime.sync.domain.day;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.domain.base.BaseWakatimeData;
 import com.wf2311.wakatime.sync.entity.DayCategoryEntity;
 import org.springframework.beans.BeanUtils;
@@ -23,10 +24,12 @@ import java.time.LocalDateTime;
 public class DayCategory extends BaseWakatimeData {
     public DayCategoryEntity convert(LocalDate day, LocalDateTime createdTime) {
         DayCategoryEntity t = new DayCategoryEntity();
-//        bean进行拷贝，然后设置day和createdTime属性
+//        bean进行属性拷贝，然后设置day和createdTime属性
         BeanUtils.copyProperties(this, t);
         t.setDay(day);
         t.setCreatedTime(createdTime);
+        //        设置secret api key
+        t.setApiKey(WakatimeProperties.SECRET_API_KEY);
         return t;
     }
 }

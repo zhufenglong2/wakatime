@@ -1,5 +1,6 @@
 package com.wf2311.wakatime.sync.domain.day;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.convert.EntityConvertHelper;
 import com.wf2311.wakatime.sync.domain.base.BaseWakatimeData;
 import com.wf2311.wakatime.sync.entity.DayEntityEntity;
@@ -29,6 +30,8 @@ public class DayEntity extends BaseWakatimeData {
         t.setDay(day);
         t.setCreatedTime(createdTime);
         t.setSimpleName(EntityConvertHelper.getSimpleName(getName()));
+        //        设置secret api key
+        t.setApiKey(WakatimeProperties.SECRET_API_KEY);
         return t;
     }
 }

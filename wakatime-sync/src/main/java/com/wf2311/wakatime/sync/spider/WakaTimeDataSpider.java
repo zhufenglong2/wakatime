@@ -21,6 +21,7 @@ public class WakaTimeDataSpider {
         String s = JoddHttpClient.get(ApiUrl.SUMMARY, params);
 //        将请求到的数据进行解析，反序列化为DaySummary对象
         DaySummary summary = JsonParser.parseList(s, DaySummary.class).get(0);
+//        summary设置所请求的数据时间 用于之后插入
         summary.setDate(date);
         return summary;
     }

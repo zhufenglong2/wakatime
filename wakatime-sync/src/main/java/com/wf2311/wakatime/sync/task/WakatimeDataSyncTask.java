@@ -25,7 +25,7 @@ public class WakatimeDataSyncTask {
     /**
      * 每天凌晨00：05同步上一天的数据
      */
-    @Scheduled(cron = "0 20/1 8 * * *")
+    @Scheduled(cron = "0 24/1 11 * * *")
     public void syncYesterday() {
         syncService.syncLastDay();
     }

@@ -1,5 +1,6 @@
 package com.wf2311.wakatime.sync.domain.day;
 
+import com.wf2311.wakatime.sync.config.WakatimeProperties;
 import com.wf2311.wakatime.sync.domain.base.BaseWakatimeData;
 import com.wf2311.wakatime.sync.entity.DayEditorEntity;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +27,8 @@ public class DayEditor extends BaseWakatimeData {
         BeanUtils.copyProperties(this, t);
         t.setDay(day);
         t.setCreatedTime(createdTime);
+        //        设置secret api key
+        t.setApiKey(WakatimeProperties.SECRET_API_KEY);
         return t;
     }
 }

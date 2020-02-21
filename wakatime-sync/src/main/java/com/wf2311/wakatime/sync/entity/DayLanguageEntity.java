@@ -44,7 +44,11 @@ public class DayLanguageEntity implements BaseDayEntity {
      */
     private LocalDateTime createdTime;
 
-
+    /**
+     * secret api key
+     */
+    @Column(name = "user_api_key")
+    private String apiKey;
     public void setName(String name) {
         this.name = CommonUtil.subStringIfOverLength(name, 30);
     }

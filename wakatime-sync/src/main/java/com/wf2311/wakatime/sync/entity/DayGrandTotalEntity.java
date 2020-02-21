@@ -38,6 +38,11 @@ public class DayGrandTotalEntity implements BaseDayEntity{
      */
     private LocalDateTime createdTime;
 
+    /**
+     * secret api key
+     */
+    @Column(name = "user_api_key")
+    private String apiKey;
     @Override
     @Transient
     public String getName() {
